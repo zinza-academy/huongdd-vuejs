@@ -1,4 +1,4 @@
-# fe-vue
+# vuejs-fe
 
 ## Project setup
 ```
