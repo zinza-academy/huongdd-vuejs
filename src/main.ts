@@ -1,11 +1,12 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router/IndexRouter';
+import router from './routers/IndexRouter';
 import './assets/css/styles.css';
-import './index.css';
-import 'bootstrap/dist/css/bootstrap-grid.min.css';
-import 'bootstrap/dist/css/bootstrap-utilities.min.css';
+import './main.css';
+import '@vuepic/vue-datepicker/dist/main.css';
+import registerGlobalComponent from './utils/components';
 
-import axios from 'axios';
-
-createApp(App).use(router).mount('#app');
+const app = createApp(App);
+app.use(router);
+registerGlobalComponent(app);
+app.mount('#app');

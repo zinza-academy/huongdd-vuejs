@@ -1,16 +1,18 @@
 <template>
-  <main>
-    <RouterView />
-  </main>
+  <component :is="layout">
+    <router-view />
+  </component>
+  <!-- <footer>this is footer</footer> -->
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { DEFAULT_LAYOUT } from './constants';
+const route = useRoute();
+console.log(route);
 
-@Options({
-  components: {}
-})
-export default class App extends Vue {}
+const layout = computed(() => route.meta.layout ?? DEFAULT_LAYOUT);
 </script>
 
 <style>
