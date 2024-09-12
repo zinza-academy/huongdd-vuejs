@@ -51,6 +51,11 @@ const admin = [
         path: 'topics/update/:id',
         name: 'topic.update',
         component: () => import('../pages/admin/topic/TopicUpdate.vue')
+      },
+      {
+        path: 'topics/create/',
+        name: 'topic.create',
+        component: () => import('../pages/admin/topic/TopicCreate.vue')
       }
     ]
   }

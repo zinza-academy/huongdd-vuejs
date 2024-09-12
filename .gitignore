@@ -19,3 +19,4 @@ pnpm-debug.log*
 src/pages/ProfilePage3.vue
 src/pages/test/*
 src/routers/TestRouter.ts
+
