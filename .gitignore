@@ -16,3 +16,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+src/pages/ProfilePage3.vue
+src/pages/test/*
+src/routers/TestRouter.ts
