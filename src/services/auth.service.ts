@@ -8,11 +8,6 @@ export async function login(email: string, password: string) {
   return data;
 }
 
-export async function profile() {
-  const data = await AxiosInstance.get('profile');
-  return data;
-}
-
 export async function resetPassword(email: string) {
   const data = await AxiosInstance.post('reset', {
     email: email
@@ -25,7 +20,7 @@ export async function logout() {
   return response;
 }
 
-export async function updateProfile(data: any) {
-  const response = await AxiosInstance.patch('update-profile', data);
+export async function refresh() {
+  const response = await AxiosInstance.post('refresh');
   return response;
 }

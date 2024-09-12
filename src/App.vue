@@ -9,9 +9,8 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { DEFAULT_LAYOUT } from './constants';
-const route = useRoute();
-console.log(route);
 
+const route = useRoute();
 const layout = computed(() => route.meta.layout ?? DEFAULT_LAYOUT);
 </script>
 
