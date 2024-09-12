@@ -1,0 +1,138 @@
+/* reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+  color: #35495e;
+  text-decoration: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* container */
+.container {
+  width: 75%;
+  margin: 0 auto;
+}
+
+form .content {
+  padding: 20px 20px;
+  background: white;
+  width: 40%;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+.form-control {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.form-input-text {
+  color: #35495e;
+  display: inline-block;
+  width: 100%;
+  padding: 10px 0 10px 5px;
+  border: 1.5px solid rgba(53, 73, 94);
+  transition: ease 0.2s;
+  font-size: medium;
+}
+
+.form-input-text:focus {
+  border: 1.5px solid rgb(94, 184, 131);
+}
+
+.form-error {
+  text-align: left;
+  color: red;
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+/* button */
+.btn {
+  cursor: pointer;
+  padding: 5px 10px;
+  background: #5eb883;
+  border-radius: 5px;
+  transition: ease 0.2s;
+  color: #35495e;
+  font-size: 1.1rem;
+}
+
+button:disabled,
+button[disabled],
+button:disabled:hover,
+button[disabled]:hover {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn:hover {
+  background: #35495e;
+  color: #5eb883;
+}
+
+/* link */
+a:hover {
+  transition: ease 0.2s;
+  color: #5eb883;
+}
+
+.third-party {
+  display: inline-block;
+  padding: 8px 0;
+  margin: 10px 0;
+  text-align: center;
+  border: 1px solid gray;
+  background-color: #f9f9fb;
+}
+
+/* flex */
+.flex {
+  display: flex;
+}
+
+.horizontal {
+  flex-direction: column;
+}
+
+/* text */
+.text-decoration-line {
+  text-align: center;
+  position: relative;
+}
+
+.text-decoration-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-color: black;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+.text-decoration-line-content {
+  position: relative;
+  display: inline-block;
+  padding: 0 5px;
+  z-index: 1;
+  background-color: white;
+}
+
+/* header */
+.h1 {
+  font-weight: 600;
+  font-size: 24px; /* 24px */
+  line-height: 32px; /* 32px */
+}
