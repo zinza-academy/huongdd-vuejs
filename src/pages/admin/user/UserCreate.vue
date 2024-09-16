@@ -1,3 +1,145 @@
 <template>
-  <h1>this is user create</h1>
+  <div class="mt-8 p-5">
+    <Form @submit="onSubmit" :validation-schema="schema">
+      <div class="flex flex-col w-96">
+        <img
+          class="rounded-full w-36 h-36 border-2 hover:border-green-400"
+          :src="preview ? preview : ''"
+          alt="avatar" />
+        <Field name="avatar" type="file" @change="onPreview" />
+        <ErrorMessage class="form-error" name="avatar" />
+      </div>
+      <div class="flex flex-wrap gap-x-4 mt-5">
+        <div class="flex flex-col w-96">
+          <label for="">Full name</label>
+          <Field name="name" type="text" class="border p-1 focus:border-green-500" />
+          <ErrorMessage class="form-error" name="name" />
+        </div>
+        <div class="flex flex-col w-96">
+          <label for="">Email</label>
+          <Field name="email" type="text" class="border p-1 focus:border-green-500" />
+          <ErrorMessage class="form-error" name="email" />
+        </div>
+      </div>
+      <div class="flex flex-wrap mt-5 gap-x-4">
+        <div class="flex flex-col w-96">
+          <label for=""> Password</label>
+          <Field name="password" type="password" class="border p-1 focus:border-green-500" />
+          <ErrorMessage class="form-error" name="password" />
+        </div>
+        <div class="flex flex-col w-96">
+          <label for="">Password Confirm</label>
+          <Field name="passwordConfirm" type="password" class="border p-1 focus:border-green-500" />
+          <ErrorMessage class="form-error" name="passwordConfirm" />
+        </div>
+      </div>
+      <div class="flex flex-wrap mt-5 gap-x-4">
+        <div class="flex flex-col w-96">
+          <label for="">Role</label>
+          <Field name="role" as="select" class="border p-1 focus:border-green-500">
+            <option value="" disabled selected>Select Role</option>
+            <option :value="1">Company Account</option>
+            <option :value="0">Member</option>
+          </Field>
+          <ErrorMessage class="form-error" name="role" />
+        </div>
+        <div class="flex flex-col w-96">
+          <label for="">Company</label>
+          <Field name="company_id" as="select" class="border p-1 focus:border-green-500">
+            <option value="" disabled selected>Select company</option>
+            <option v-for="company in formValue.companies" :value="company.id" :key="company.id">
+              {{ company.name }}
+            </option>
+          </Field>
+          <ErrorMessage class="form-error" name="company_id" />
+        </div>
+      </div>
+      <div class="flex flex-col mt-5 w-96">
+        <label for="">Date of birth</label>
+        <Field name="dob" type="date" class="border p-1 focus:border-green-500" />
+        <ErrorMessage class="form-error" name="dob" />
+      </div>
+      <div class="mt-5">
+        <button class="btn">Submit</button>
+      </div>
+      <div class="form-error">{{ apiResp }}</div>
+    </Form>
+  </div>
 </template>
+
+<script lang="ts" setup>
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import { onMounted, ref } from 'vue';
+import { useToastr } from '@/plugins/toastr.plugin';
+import { create, store } from '@/services/admin/user.service';
+
+const formValue = ref({
+  companies: {}
+});
+
+const preview = ref('');
+const apiResp = ref();
+const toastr = useToastr();
+
+const schema = yup.object({
+  name: yup.string().min(5, 'Name must have at least 5 characters').required(),
+  email: yup.string().email('Invalid email').required(),
+  password: yup
+    .string()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .min(8, 'Password must have at least 8 characters')
+    .matches(/^\S*$/, 'Password cannot contain spaces')
+    .required(),
+
+  passwordConfirm: yup
+    .string()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .oneOf([yup.ref('password')], 'Password confirm must match')
+    .required(),
+
+  dob: yup.string().required(),
+  company_id: yup.number().required('Please select company'),
+  role: yup.number().required('Please select role'),
+  avatar: yup
+    .mixed()
+    .test('fileSize', 'This file must be less than 2 MB', (value) => {
+      return value ? value.size <= 2000000 : true;
+    })
+    .test('fileType', 'Accept image only', (value) => {
+      return value ? ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type) : true;
+    })
+    .required()
+});
+
+const onPreview = (e) => {
+  // console.log(e.target.files[0]);
+
+  preview.value = URL.createObjectURL(e.target.files[0]);
+};
+
+const onSubmit = async (values) => {
+  await store(values)
+    .then((response) => {
+      if (response.data['error']) {
+        apiResp.value = response.data['error'];
+      } else {
+        toastr.success('User created');
+        console.log(response.data);
+      }
+    })
+    .catch((e) => {
+      toastr.error('An error occur: ' + e);
+    });
+};
+
+onMounted(async () => {
+  await create().then((response) => {
+    formValue.value = response.data;
+  });
+});
+</script>

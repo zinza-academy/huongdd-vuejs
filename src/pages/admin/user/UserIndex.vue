@@ -1,6 +1,11 @@
 <template>
   <div class="px-8 mt-8">
     <div class="flex justify-start mb-5 gap-x-4">
+      <router-link
+        :to="{ name: 'user.create' }"
+        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-700">
+        Create new user
+      </router-link>
       <button
         id="delete_selected_users"
         class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-700">
