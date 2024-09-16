@@ -36,25 +36,32 @@
       <div class="flex flex-wrap mt-5 gap-x-4">
         <div class="flex flex-col w-96">
           <label for="">Role</label>
-          <Field name="role" v-model="roleRef" v-slot="{ field }">
+          <!-- <Field name="role" v-model="roleOptions" v-slot="{ field }">
             <select-input
               v-bind="field"
               :options="options"
-              v-model="roleRef"
+              v-model="roleOptions"
               value-by="value"
               label="label" />
+          </Field> -->
+          <Field as="select" name="role">
+            <option value="" disabled>Select user's role</option>
+            <option :value="role.value" v-for="(role, index) in roleOptions" :key="index">
+              {{ role.label }}
+            </option>
           </Field>
           <ErrorMessage class="form-error" name="role" />
         </div>
         <div class="flex flex-col w-96">
           <label for="">Company</label>
-          <Field name="company_id" v-model="companyRef" v-slot="{ field }">
-            <select-input
-              v-bind="field"
-              :options="formValue.companies"
-              label="name"
-              value-by="id"
-              v-model="companyRef" />
+          <Field name="company_id" as="select">
+            <option value="" disabled>Select company</option>
+            <option
+              :value="company.id"
+              v-for="(company, index) in formValue.companies"
+              :key="index">
+              {{ company.name }}
+            </option>
           </Field>
           <ErrorMessage class="form-error" name="company_id" />
         </div>
@@ -78,7 +85,6 @@ import * as yup from 'yup';
 import { onMounted, ref } from 'vue';
 import { useToastr } from '@/plugins/toastr.plugin';
 import { createUser, storeUser } from '@/services/admin/user.service';
-import SelectInput from '@/components/input/SelectInput.vue';
 import { useRouter } from 'vue-router';
 
 const formValue = ref({
@@ -90,12 +96,10 @@ const apiResp = ref();
 const toastr = useToastr();
 const router = useRouter();
 
-const options = ref([
+const roleOptions = ref([
   { value: 2, label: 'Account Company' },
   { value: 1, label: 'Member' }
 ]);
-const roleRef = ref();
-const companyRef = ref();
 
 const schema = yup.object({
   name: yup.string().min(5, 'Name must have at least 5 characters').required(),

@@ -58,25 +58,32 @@
       <div class="flex flex-wrap mt-5 gap-x-4">
         <div class="flex flex-col w-96">
           <label for="">Role</label>
-          <Field name="role" v-model="roleRef" v-slot="{ field }">
+          <!-- <Field name="role" v-model="roleRef" v-slot="{ field }">
             <select-input
               v-bind="field"
               :options="options"
               label="label"
               value-by="value"
               v-model="roleRef" />
+          </Field> -->
+          <Field name="role" as="select" v-model="roleRef">
+            <option value="" disabled>Select user's role</option>
+            <option :value="role.value" v-for="(role, index) in roleOptions" :key="index">
+              {{ role.label }}
+            </option>
           </Field>
           <ErrorMessage class="form-error" name="role" />
         </div>
         <div class="flex flex-col w-96">
           <label for="">Company</label>
-          <Field name="company_id" v-model="companyRef" v-slot="{ field }">
-            <select-input
-              v-bind="field"
-              :options="formValue.companies"
-              v-model="companyRef"
-              value-by="id"
-              label="name" />
+          <Field name="company_id" as="select" v-model="companyRef">
+            <option value="" disabled>Select company</option>
+            <option
+              :value="company.id"
+              v-for="(company, index) in formValue.companies"
+              :key="index">
+              {{ company.name }}
+            </option>
           </Field>
           <ErrorMessage class="form-error" name="company_id" />
         </div>
@@ -116,7 +123,7 @@ const formValue = ref({
 const apiResp = ref();
 const toastr = useToastr();
 const route = useRoute();
-const options = ref([
+const roleOptions = ref([
   { value: 2, label: 'Account Company' },
   { value: 1, label: 'Member' }
 ]);
