@@ -1,24 +1,28 @@
 <template>
-  <select :name="name" :multiple="isMultiple">
-    <option value="" disabled selected>Select {{ name }}</option>
-    <option
-      v-for="(item, index) in options"
-      :key="index"
-      :value="item[valueBy]"
-      :selected="isSelected(item[valueBy])">
+  <select
+    :name="name"
+    :multiple="isMultiple"
+    class="border p-1 focus:border-green-500"
+    v-bind="$attrs">
+    <option value="" disabled>Select {{ displayName }}</option>
+    <option v-for="(item, index) in options" :key="index" :value="item[valueBy]">
       {{ item[label] }}
     </option>
   </select>
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 const props = defineProps({
   name: {
     type: String,
     required: true
   },
-  options: [],
+  options: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
   isMultiple: {
     type: Boolean,
     default: () => false
@@ -35,12 +39,8 @@ const props = defineProps({
     type: [Array, Number]
   }
 });
-
-const isSelected = (val: Number) => {
-  if (typeof props.selected === 'number') {
-    return val === props.selected;
-  } else if (Array.isArray(props.selected)) {
-    return props.selected.indexOf(val) > -1 ? true : false;
-  }
-};
+const displayName = ref();
+displayName.value = computed(() => {
+  return props.name.split('_')[0];
+});
 </script>

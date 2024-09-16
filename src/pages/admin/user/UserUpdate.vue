@@ -58,33 +58,25 @@
       <div class="flex flex-wrap mt-5 gap-x-4">
         <div class="flex flex-col w-96">
           <label for="">Role</label>
-          <!-- <Field
-            name="role"
-            as="select"
-            class="border p-1 focus:border-green-500"
-            v-model="formValue.user.role">
-            <option :value="1" :selected="formValue.user.role === 1">Company Account</option>
-            <option :value="0" :selected="formValue.user.role === 0">Member</option>
-          </Field> -->
-          <Field name="role">
-            <select-input name="role" :options="options" label="label" value-by="value" />
+          <Field name="role" v-model="roleRef" v-slot="{ field }">
+            <select-input
+              v-bind="field"
+              :options="options"
+              label="label"
+              value-by="value"
+              v-model="roleRef" />
           </Field>
           <ErrorMessage class="form-error" name="role" />
         </div>
         <div class="flex flex-col w-96">
           <label for="">Company</label>
-          <Field
-            name="company_id"
-            as="select"
-            v-model="formValue.user.company_id"
-            class="border p-1 focus:border-green-500">
-            <option
-              v-for="company in formValue.companies"
-              :value="company.id"
-              :key="company.id"
-              :selected="company.id === formValue.user.company_id">
-              {{ company.name }}
-            </option>
+          <Field name="company_id" v-model="companyRef" v-slot="{ field }">
+            <select-input
+              v-bind="field"
+              :options="formValue.companies"
+              v-model="companyRef"
+              value-by="id"
+              label="name" />
           </Field>
           <ErrorMessage class="form-error" name="company_id" />
         </div>
@@ -114,24 +106,28 @@ import { useToastr } from '@/plugins/toastr.plugin';
 import { useRoute } from 'vue-router';
 import { showOneUser, updateUser, updateUserAvatar } from '@/services/admin/user.service';
 import SelectInput from '@/components/input/SelectInput.vue';
+import { ONE_MB } from '@/constants';
 
 const formValue = ref({
   user: {},
-  companies: {},
+  companies: Array,
   avatar: ''
 });
 const apiResp = ref();
 const toastr = useToastr();
 const route = useRoute();
 const options = ref([
-  { value: 1, label: 'Account Company' },
-  { value: 0, label: 'Member' }
+  { value: 2, label: 'Account Company' },
+  { value: 1, label: 'Member' }
 ]);
+const roleRef = ref();
+const companyRef = ref();
+
 const avatarSchema = yup.object({
   avatar: yup
     .mixed()
     .test('fileSize', 'This file must be less than 2 MB', (value) => {
-      return value ? value.size <= 2000000 : true;
+      return value ? value.size <= 2 * ONE_MB : true;
     })
     .test('fileType', 'Accept image only', (value) => {
       return value ? ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type) : true;
@@ -183,9 +179,8 @@ const onSubmitAvatar = async (values) => {
   const formData = new FormData();
   formData.append('avatar', values.avatar);
   await updateUserAvatar(route.params.id, formData)
-    .then((res) => {
+    .then(() => {
       toastr.success('Uploaded');
-      console.log(res);
     })
     .catch((error) => {
       toastr.error(error);
@@ -198,7 +193,7 @@ const onSubmit = async (values) => {
       if (response.data['error']) {
         apiResp.value = response.data['error'];
       } else {
-        toastr.success('Profile updated successfully');
+        toastr.success('User updated successfully');
       }
     })
     .catch((e) => {
@@ -214,6 +209,8 @@ const onChangeAvatar = (e) => {
 onMounted(async () => {
   await showOneUser(route.params.id).then((resp) => {
     formValue.value = resp.data;
+    roleRef.value = formValue.value.user.role;
+    companyRef.value = formValue.value.user.company_id;
   });
 });
 </script>

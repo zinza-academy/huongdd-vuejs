@@ -36,20 +36,25 @@
       <div class="flex flex-wrap mt-5 gap-x-4">
         <div class="flex flex-col w-96">
           <label for="">Role</label>
-          <Field name="role" as="select" class="border p-1 focus:border-green-500">
-            <option value="" disabled selected>Select Role</option>
-            <option :value="1">Company Account</option>
-            <option :value="0">Member</option>
+          <Field name="role" v-model="roleRef" v-slot="{ field }">
+            <select-input
+              v-bind="field"
+              :options="options"
+              v-model="roleRef"
+              value-by="value"
+              label="label" />
           </Field>
           <ErrorMessage class="form-error" name="role" />
         </div>
         <div class="flex flex-col w-96">
           <label for="">Company</label>
-          <Field name="company_id" as="select" class="border p-1 focus:border-green-500">
-            <option value="" disabled selected>Select company</option>
-            <option v-for="company in formValue.companies" :value="company.id" :key="company.id">
-              {{ company.name }}
-            </option>
+          <Field name="company_id" v-model="companyRef" v-slot="{ field }">
+            <select-input
+              v-bind="field"
+              :options="formValue.companies"
+              label="name"
+              value-by="id"
+              v-model="companyRef" />
           </Field>
           <ErrorMessage class="form-error" name="company_id" />
         </div>
@@ -73,15 +78,24 @@ import * as yup from 'yup';
 import { onMounted, ref } from 'vue';
 import { useToastr } from '@/plugins/toastr.plugin';
 import { createUser, storeUser } from '@/services/admin/user.service';
-import { ONE_MB } from '@/constants';
+import SelectInput from '@/components/input/SelectInput.vue';
+import { useRouter } from 'vue-router';
 
 const formValue = ref({
-  companies: {}
+  companies: Array
 });
 
 const preview = ref('');
 const apiResp = ref();
 const toastr = useToastr();
+const router = useRouter();
+
+const options = ref([
+  { value: 2, label: 'Account Company' },
+  { value: 1, label: 'Member' }
+]);
+const roleRef = ref();
+const companyRef = ref();
 
 const schema = yup.object({
   name: yup.string().min(5, 'Name must have at least 5 characters').required(),
@@ -109,7 +123,7 @@ const schema = yup.object({
   avatar: yup
     .mixed()
     .test('fileSize', 'This file must be less than 2 MB', (value) => {
-      return value ? value.size <= 2 * ONE_MB : true;
+      return value ? value.size <= 2000000 : true;
     })
     .test('fileType', 'Accept image only', (value) => {
       return value ? ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type) : true;
@@ -118,8 +132,6 @@ const schema = yup.object({
 });
 
 const onPreview = (e) => {
-  // console.log(e.target.files[0]);
-
   preview.value = URL.createObjectURL(e.target.files[0]);
 };
 
@@ -130,7 +142,7 @@ const onSubmit = async (values) => {
         apiResp.value = response.data['error'];
       } else {
         toastr.success('User created');
-        console.log(response.data);
+        router.push({ name: 'user.index' });
       }
     })
     .catch((e) => {
