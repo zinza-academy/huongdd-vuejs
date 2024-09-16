@@ -5,19 +5,19 @@ export async function index(page: Number | String) {
   return data;
 }
 
-export async function deleteMany(ids: String[]) {
+export async function deleteManyUser(ids: String[]) {
   const response = await AxiosInstance.post('user/delete-many', {
     ids: ids
   });
   return response;
 }
 
-export async function show(id: Number | String) {
+export async function showOneUser(id: Number | String) {
   const response = await AxiosInstance.get(`user/${id}`);
   return response;
 }
 
-export async function update(id: Number | String, data: any) {
+export async function updateUser(id: Number | String, data: any) {
   const response = await AxiosInstance.patch(`user/${id}`, data);
   return response;
 }
@@ -27,12 +27,12 @@ export async function updateUserAvatar(id: Number | String, data: any) {
   return response;
 }
 
-export async function create() {
+export async function createUser() {
   const response = await AxiosInstance.get('user/create');
   return response;
 }
 
-export async function store(data: any) {
+export async function storeUser(data: any) {
   const response = await AxiosInstance.post('user', data, {
     headers: {
       'Content-Type': 'multipart/form-data'

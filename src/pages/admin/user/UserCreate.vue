@@ -72,7 +72,8 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import { onMounted, ref } from 'vue';
 import { useToastr } from '@/plugins/toastr.plugin';
-import { create, store } from '@/services/admin/user.service';
+import { createUser, storeUser } from '@/services/admin/user.service';
+import { ONE_MB } from '@/constants';
 
 const formValue = ref({
   companies: {}
@@ -108,7 +109,7 @@ const schema = yup.object({
   avatar: yup
     .mixed()
     .test('fileSize', 'This file must be less than 2 MB', (value) => {
-      return value ? value.size <= 2000000 : true;
+      return value ? value.size <= 2 * ONE_MB : true;
     })
     .test('fileType', 'Accept image only', (value) => {
       return value ? ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type) : true;
@@ -123,7 +124,7 @@ const onPreview = (e) => {
 };
 
 const onSubmit = async (values) => {
-  await store(values)
+  await storeUser(values)
     .then((response) => {
       if (response.data['error']) {
         apiResp.value = response.data['error'];
@@ -138,7 +139,7 @@ const onSubmit = async (values) => {
 };
 
 onMounted(async () => {
-  await create().then((response) => {
+  await createUser().then((response) => {
     formValue.value = response.data;
   });
 });

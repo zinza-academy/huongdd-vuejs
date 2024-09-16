@@ -58,13 +58,16 @@
       <div class="flex flex-wrap mt-5 gap-x-4">
         <div class="flex flex-col w-96">
           <label for="">Role</label>
-          <Field
+          <!-- <Field
             name="role"
             as="select"
             class="border p-1 focus:border-green-500"
             v-model="formValue.user.role">
             <option :value="1" :selected="formValue.user.role === 1">Company Account</option>
             <option :value="0" :selected="formValue.user.role === 0">Member</option>
+          </Field> -->
+          <Field name="role">
+            <select-input name="role" :options="options" label="label" value-by="value" />
           </Field>
           <ErrorMessage class="form-error" name="role" />
         </div>
@@ -109,7 +112,8 @@ import * as yup from 'yup';
 import { onMounted, ref } from 'vue';
 import { useToastr } from '@/plugins/toastr.plugin';
 import { useRoute } from 'vue-router';
-import { show, update, updateUserAvatar } from '@/services/admin/user.service';
+import { showOneUser, updateUser, updateUserAvatar } from '@/services/admin/user.service';
+import SelectInput from '@/components/input/SelectInput.vue';
 
 const formValue = ref({
   user: {},
@@ -119,7 +123,10 @@ const formValue = ref({
 const apiResp = ref();
 const toastr = useToastr();
 const route = useRoute();
-
+const options = ref([
+  { value: 1, label: 'Account Company' },
+  { value: 0, label: 'Member' }
+]);
 const avatarSchema = yup.object({
   avatar: yup
     .mixed()
@@ -186,7 +193,7 @@ const onSubmitAvatar = async (values) => {
 };
 
 const onSubmit = async (values) => {
-  await update(route.params.id, values)
+  await updateUser(route.params.id, values)
     .then((response) => {
       if (response.data['error']) {
         apiResp.value = response.data['error'];
@@ -205,9 +212,8 @@ const onChangeAvatar = (e) => {
 };
 
 onMounted(async () => {
-  await show(route.params.id).then((resp) => {
+  await showOneUser(route.params.id).then((resp) => {
     formValue.value = resp.data;
   });
-  console.log(formValue);
 });
 </script>

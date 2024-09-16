@@ -87,7 +87,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { index, deleteMany } from '@/services/admin/user.service';
+import { index, deleteManyUser } from '@/services/admin/user.service';
 import DropDown from '@/components/DropDown.vue';
 import PaginationComponent from '@/components/PaginationComponent.vue';
 import { selectMany, deleteManyRecords } from '@/utils/functions';
@@ -107,6 +107,6 @@ const getUsers = async (page = 1) => {
 onMounted(() => {
   getUsers();
   selectMany(target);
-  deleteManyRecords(target, deleteMany);
+  deleteManyRecords(target, deleteManyUser);
 });
 </script>
